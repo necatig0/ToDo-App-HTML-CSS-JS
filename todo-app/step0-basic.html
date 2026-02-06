@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="todo-app-css.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+
+    <div class="header">
+        <h1>TODO APP</h1>
+    </div>
+
+    <div class="add-input">
+
+        <form action="">
+            <input type="text" name="" id="taskInput">
+            <button type="submit" id="add-btn">ADD</button>
+            <button type="submit" id="delete-btn">DELETE</button>
+        </form>
+
+    </div>
+
+    <div class="items">
+        <ul id="task-list">
+            <!--<li>
+                <div class="tasks">
+                    <input type="checkbox" name="" id="1">
+                    <label for="1">TASK 1</label>
+
+                    <button><i class="fa-solid fa-pen-to-square"></i></button>
+                    <button><i class="fa-solid fa-broom"></i></button>
+                </div>
+            </li> -->
+        </ul>
+    </div>
+
+    <script>
+        "use strict"
+
+        let allTasks = [];
+
+        const taskInput = document.querySelector("#taskInput");
+        const addButton = document.querySelector("#add-btn");
+        const deleteButton = document.querySelector("#delete-btn");
+        let isEditMode = false, editId = -1;
+        
+        addButton.addEventListener("click", addItems);
+        deleteButton.addEventListener("click", deleteAll);
+
+        displayTasks(); // When Page is Opened for the First Time
+
+        function addItems(event) {
+            event.preventDefault();
+
+            let inputValue = taskInput.value.trim();
+
+            if(!isEditMode) {
+                if (inputValue === "") {
+                    alert("Please Enter a Valid Task!");
+                    return;
+                }
+
+                allTasks.push({ "id": allTasks.length + 1, "taskName": inputValue, "status": "pending"});
+
+            } else {
+
+                for(let task of allTasks) {
+                    if(task.id === editId) task.taskName = taskInput.value;
+                }
+                isEditMode = false;
+                editId = -1
+            }
+            taskInput.value = "";
+            displayTasks();
+        }
+
+        function displayTasks() {
+            let ul = document.querySelector("#task-list");
+            ul.innerHTML = "";
+
+            if (allTasks.length === 0) {
+                ul.innerHTML = "<li><p class='p-3 m-0'>Your Task List is Empty</p></li>"
+                return;
+            }
+
+            for (let task of allTasks) {
+
+                let status = task.status;
+                console.log(status);
+
+                let li = `
+                    <li>
+                        <div class="tasks">
+                            <input ${status} type="checkbox" onclick = "updateStatus(this)" id="${task.id}">
+                            <label for="${task.id}" class="${status}">${task.taskName}</label>
+
+                            <button onclick = "updateTask(${task.id}, '${task.taskName}')"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button onclick = "deleteTask(${task.id})"><i class="fa-solid fa-broom"></i></button>
+                        </div>
+                    </li>
+                    `;
+                    ul.insertAdjacentHTML("beforeend", li);
+            }
+        }
+
+        function deleteTask(id) {
+            let deletedItemIndex;
+
+            for(let idx in allTasks) {
+                if(allTasks[idx].id === id) {
+                    deletedItemIndex = idx;
+                    break;
+                }
+            }
+
+            allTasks.splice(deletedItemIndex, 1);
+            displayTasks();
+        }
+
+        function updateTask (id, taskName) {
+            /*
+            let deletedItemIndex;
+
+            for(let idx in allTasks) {
+                if(allTasks[idx].id === id) {
+                    deletedItemIndex = idx;
+                    break;
+                }
+            }
+
+            allTasks.splice(deletedItemIndex, 1);
+            displayTasks();
+            taskInput.value = taskName;
+            taskInput.focus();*/
+
+            editId = id;
+            isEditMode = true;
+
+            taskInput.value = taskName;
+            taskInput.focus();
+        }
+
+        function deleteAll(e) {
+            e.preventDefault();
+            allTasks.splice(0, allTasks.length);
+            displayTasks();
+        }
+
+        function updateStatus(input) {
+            let label = input.nextElementSibling;
+            let status;
+
+            if(input.checked) {
+                label.classList.add("checked");
+                status = "checked";
+            } else {
+                label.classList.remove("checked");
+                status = "pending";
+            }
+            for(let task of allTasks) {
+                if(task.id == input.id) {
+                    task.status = status;
+                }
+            }
+        }
+
+    </script>
+</body>
+
+</html>
