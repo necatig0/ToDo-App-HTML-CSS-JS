@@ -1,0 +1,31 @@
+html {
+    font-size: "62.5%";
+}
+
+* {
+    margin-top: 5px;
+    padding: 0;
+    box-sizing: border-box;
+    
+}
+
+body {
+    text-align: center;
+}
+
+.big-container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.input-head {
+    width: 80% !important;
+    margin: 20px auto;
+}
+
+.dropdown-toggle::after {
+    display: none !important;
+}
